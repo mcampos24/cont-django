@@ -1,4 +1,5 @@
 import os
+import PyPDF2
 from django.conf import settings  #para obtener BASE_DIR
 
 #Django no acepta tkinter porque no es una app de escritorio, entonces cambiamos la manera de obtener el texto

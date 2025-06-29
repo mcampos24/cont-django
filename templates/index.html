@@ -23,14 +23,6 @@
                         <i class="fa-solid fa-envelope-open-text"></i>
                         <h1 class="logo"><a href="/">CONT+</a></h1>
                     </div>
-                    <div class="conteiner-user">
-                        <i class="fa-solid fa-user"></i>
-                        <i class="fa-solid fa-envelope-open-text"></i>
-                        <div class="content-shopping-cart">
-                            <span class="text"> Textos guardados </span>
-                            <span class="number">(0)</span>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="container-navbar">
@@ -40,23 +32,41 @@
                         <li><a href="?idioma_i=2">Español</a></li>
                         <li><a href="?idioma_i=1">English</a></li>
                         <li><a href="?idioma_i=3">Portugues</a></li>
-                        <li><a href="?idioma_i=3">Japones</a></li>
+                        <li><a href="?idioma_i=4">Japones</a></li>
                     </ul>
-                    <form class="search-fore">
-                        <input type="search" placeholder="buscar..."/>
-                        <button class="btn-search">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            
-                        </button>
-                    </form>
                 </nav>
             </div>
         </header>
         <section class="banner">
             <div class="content-banner">
-                <p>Puedes ver estadisticas de tu texto aqui.</p>
-                <h2>CONT+ ESPAÑOL <br> Analizador de textos</h2>
-                <a href="#">Usar ahora</a>
+                <p>{{ mensajes.puedes_ver }}</p>
+                <h2>CONT+ {{ mensajes.idioma }} <br> {{ mensajes.analizador }}</h2>
+
+                <div class="contenedor-interaccion">
+                    <button class="boton-usar" onclick="mostrarFormulario()" type="button">
+                        {{ mensajes.usar }}
+                    </button>
+
+                    <form id="formulario-texto" method="POST" enctype="multipart/form-data" style="display: none;">
+                        {% csrf_token %}
+                        <label for="modo">{{ mensajes.n }}</label>
+                        <select name="modo" id="modo" onchange="mostrarCampos()">
+                            <option value="escribir">{{ mensajes.l }}</option>
+                            <option value="archivo">{{ mensajes.m }}</option>
+                        </select>
+
+                        <div id="campoTexto">
+                            <textarea name="texto" rows="6" cols="60" placeholder="{{ mensajes.x }}"></textarea>
+                        </div>
+
+                        <div id="campoArchivo" style="display:none;">
+                            <input type="file" name="archivo">
+                        </div>
+
+                        <input type="hidden" name="idioma_i" value="{{ idioma_i }}">
+                        <button type="submit">{{ mensajes.analizar }}</button>
+                    </form>
+                </div>
             </div>
         </section>
         <main class="main-content">
@@ -64,55 +74,66 @@
                 <div class="card-feature">
                     <i class="fa-solid fa-plane-up"></i>
                     <div class="feature-content">
-                        <span>Globalización de textos</span>
-                        <p>Capacidad de leer idiomas varios</p>
+                        <span>{{ mensajes.globalizacion }}</span>
+                        <p>{{ mensajes.capacidad }}</p>
                     </div>
                 </div>
                 <div class="card-feature">
                     <i class="fa-solid fa-hashtag"></i>
                     <div class="feature-content">
-                        <span>Contador</span>
-                        <p>Caracteres y palabras</p>
+                        <span>{{ mensajes.contador }}</span>
+                        <p>{{ mensajes.caracteres }}</p>
                     </div>
                 </div>
                 <div class="card-feature">
                     <i class="fa-brands fa-wordpress"></i>
                     <div class="feature-content">
-                        <span>Corrector de textos</span>
-                        <p>Buen uso de muletillas</p>
+                        <span>{{ mensajes.corrector }}</span>
+                        <p>{{ mensajes.muletillas }}</p>
                     </div>
                 </div>
             </section>
             <section class="container top-categories">
-                <h1 class="heading-1">Mejores funciones</h1>
+                <h1 class="heading-1">{{ mensajes.funciones }}</h1>
                 <div class="container-categories">
                     <div class="card-categorie categorie-moca">
-                        <p>Contador de caracteres</p>
-                        <span>Ver más</span>
-                    </div>
-                    <div class="card-categorie categorie-expreso">
-                        <p>Contador de palabras</p>
-                        <span>Ver más</span>
+                        <p>{{ mensajes.contador_caract }}</p>
+                        <span>{{ mensajes.ver_mas}}</span>
                     </div>
                     <div class="card-categorie categorie-capuchino">
-                        <p>Sugiridor de sinonimos</p>
-                        <span>Ver más</span>
+                        <p>{{ mensajes.sugerencias }}</p>
+                        <span>{{ mensajes.ver_mas}}</span>
                     </div>
                     <div class="card-categorie categorie-graficas">
-                        <p>Generador de graficas</p>
-                        <span>Ver más</span>
+                        <p>{{ mensajes.generador_graf }}</p>
+                        <span>{{ mensajes.ver_mas}}</span>
                     </div>
                 </div>
-            </section>
-            <section class="Text">
-                <h1 class="title">Texto a analizar</h1>
-                <input type="text" placeholder="Ingresa tu texto...">  
             </section>
         </main>     
         <script
             src="https://kit.fontawesome.com/25bd882d70.js"
             crossorigin="anonymous">
         </script>
+        <script>
+            function mostrarFormulario() {
+                const form = document.getElementById("formulario-texto");
+                if (form) {
+                    form.style.display = "block";
+                    setTimeout(() => {
+                        form.classList.add("visible");}, 10);
+                    document.getElementById("campoTexto").style.display = "block";
+                    document.getElementById("campoArchivo").style.display = "none";
+                } else {
+                alert("No se encontró el formulario.");
+                }
+            }
 
+            function mostrarCampos() {
+                const modo = document.getElementById("modo").value;
+                document.getElementById("campoTexto").style.display = (modo === "escribir") ? "block" : "none";
+                document.getElementById("campoArchivo").style.display = (modo === "archivo") ? "block" : "none";
+            }
+        </script>
     </body>
 </html>
