@@ -29,7 +29,7 @@ def obtener_texto_desde_request(request):
                 return leer_pdf(archivo)
     return ""
 
-def detectar_idioma(texto):
+def detectar_idioma(texto, messages=None):
     texto = texto.lower()
 
     archivos_idioma = {
@@ -53,7 +53,7 @@ def detectar_idioma(texto):
                 puntaje[idioma] += texto.count(palabra)
 
     if all(p == 0 for p in puntaje.values()):
-        return "Idioma no identificado"
+        return mensajes["no"]
 
     return max(puntaje, key=puntaje.get)
 
@@ -114,6 +114,8 @@ def analizar_texto(texto):
     palabras_5_top = dict(list(palabra_veces_ord.items())[:5])
     frecuencias_top = frecuencia_porcentual(palabras_5_top, total_palabras)
     varianza_info = varianza_poblacional(total_veces, palabras_unicas)
+    palabra_moda = palabra_mas_repetida(palabras_5_top)
+    sugerencias_sinonimos = sugerir_sinonimos(palabras_5_top, sinonimos, idioma)
     return {
         "idioma": idioma,
         "total_palabras": total_palabras,
@@ -123,30 +125,32 @@ def analizar_texto(texto):
         "palabras_frecuencia": palabra_veces_ord,
         "palabras_mas_veces": palabras_mas_veces,
         "frecuencias_clasificadas": frecuencias_top,
-        "varianza_info": varianza_info
+        "varianza_info": varianza_info,
+        "palabra_moda": palabra_moda,
+        "sugerencias_sinonimos": sugerir_sinonimos,
     }
 def palabra_mas_repetida(palabras_5_top):
     return {list(palabras_5_top.keys())[0]}
 
-def frecuencia_porcentual(palabras_5_top, total_palabras):
+def frecuencia_porcentual(palabras_5_top, total_palabras, mensajes =None):
 
     resultado = {}
 
     for palabra in palabras_5_top:
         frecuencia_porcentual = round(palabras_5_top[palabra] / total_palabras * 100, 2) #Porcentaje de cada palabra en el textos
         if frecuencia_porcentual >= 30:
-            respuesta = (f"{palabra} {y} {frecuencia_porcentual} % {z}")
+            respuesta = f"{palabra} {mensajes.get('y')} {frecuencia_porcentual} % {mensajes.get('z')}"
         elif frecuencia_porcentual >= 15:
-            respuesta = (f"{palabra} {y} {frecuencia_porcentual} % {a}")
+            respuesta = f"{palabra} {mensajes.get('y')} {frecuencia_porcentual} % {mensajes.get('a')}"
         elif frecuencia_porcentual < 15 and frecuencia_porcentual >= 5:
-            respuesta = (f"{palabra} {y} {frecuencia_porcentual} % {b}")
+            respuesta = f"{palabra} {mensajes.get('y')} {frecuencia_porcentual} % {mensajes.get('b')}"
         else:
-            respuesta = (f"{palabra} {y} {frecuencia_porcentual} % {d}")
+            respuesta = f"{palabra} {mensajes.get('y')} {frecuencia_porcentual} % {mensajes.get('d')}"
 
         resultado[palabra] = respuesta
     return resultado
 
-def varianza_poblacional(total_veces, palabras_unicas):
+def varianza_poblacional(total_veces, palabras_unicas, mensajes= None):
     #Cálculo de promedio de frecuencia.
     suma_frecuencias = 0
     for i in total_veces:
@@ -159,15 +163,38 @@ def varianza_poblacional(total_veces, palabras_unicas):
         varianza = nu / len(palabras_unicas)
     #Dependiendo de la varianza que tenga el texto
     if varianza <= 0.2:
-        respuesta = e
+        respuesta = mensajes.get(e)
     elif 0.2 < varianza < 0.6:
-        respuesta = f
+        respuesta = mensajes.get(f)
     else:
-        respuesta = g 
+        respuesta = mensajes.get(g)
 
     return {
         "promedio": round(promedio, 2),
         "varianza": round(varianza, 2),
         "respuesta": respuesta
     }
+def sugerir_sinonimos(palabras_5_top, sinonimos, id_sinonimos):
+    idioma_de_sinonimos = sinonimos[id_sinonimos]  
+    sugerencias = []
 
+    for tipo_palabra, listas in idioma_de_sinonimos.items():
+        usados = []  
+
+        for palabra in listas:
+            if palabra in palabras_5_top:
+                usados.append(palabra)
+
+        if len(usados) > 0:
+            sugerencias_tipo = []  
+            for palabra in listas:
+                if palabra not in usados:
+                    sugerencias_tipo.append(palabra)
+
+            if len(sugerencias_tipo) > 0:
+                sugerencias.append({
+                    "tipo": tipo_palabra,
+                    "usados": usados,
+                    "sugerencias": sugerencias_tipo
+                    })
+    return sugerencias 
