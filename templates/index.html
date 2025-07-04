@@ -70,25 +70,53 @@
             </div>
         </section>
         <section>
-            <div>
-                <h1>El idioma de tu texto es:</h1>
-                <p>{{detectar:idioma}}</p>
-            </div>
-            <div>
-                <h1>Su texto se esta analizando</h1>
-            </div>
-            <div>
-                <h1>El analisis de su texto es:</h1>
-                <p>{{analisis}}</p>
-                <h1>La palabra más repetida de tu texto es:</h1>
-                <p>{{palabra_mas_repetida}}</p>
-                <h1>La frecuencia porcentual de tu texto es:</h1>
-                <p>{{frecuencia_porcentual}}</p>
-                <h1>La varianza poblacional de tu texto es:</h1>
-                <p>{{varianza_poblacional}}</p>
-                <h1>Algunos de los sinonimos que te sirven son:</h1>
-                <p>{{sugerir_sinonimos}}</p>
-            </div>
+            <h2>Resultado del análisis</h2>
+
+            <ul>
+            <li><strong>Idioma detectado:</strong> {{ resultado.idioma }}</li>
+            <li><strong>Total de palabras:</strong> {{ resultado.total_palabras }}</li>
+            <li><strong>Total de letras:</strong> {{ resultado.total_letras }}</li>
+            <li><strong>Total de frases:</strong> {{ resultado.total_frases }}</li>
+            <li><strong>Palabra moda:</strong> <span class="badge">{{ resultado.palabra_moda }}</span></li>
+            </ul>
+
+            <h3>Palabras más frecuentes (Top 5)</h3>
+            <table>
+            <thead>
+                <tr><th>Palabra</th><th>Veces</th><th>Comentario</th></tr>
+            </thead>
+            <tbody>
+                {% for palabra, veces in resultado.palabras_top.items %}
+                <tr>
+                <td>{{ palabra }}</td>
+                <td>{{ veces }}</td>
+                <td>{{ resultado.frecuencias_clasificadas.get(palabra) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+
+            <h3>Sugerencias de sinónimos</h3>
+            {% if resultado.sugerencias_sinonimos %}
+            <ul>
+                {% for bloque in resultado.sugerencias_sinonimos %}
+                <li>
+                    <strong>{{ bloque.tipo|capfirst }}:</strong>
+                    Ya usaste <em>{{ bloque.usados|join:", " }}</em>.<br>
+                    Puedes considerar: <em>{{ bloque.sugerencias|join:", " }}</em>.
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No hay sugerencias de sinónimos.</p>
+            {% endif %}
+
+            <h3>Varianza de frecuencia</h3>
+            <p>
+            Promedio: <strong>{{ resultado.varianza_info.promedio }}</strong> ·
+            Varianza: <strong>{{ resultado.varianza_info.varianza }}</strong><br>
+            {{ resultado.varianza_info.respuesta }}
+            </p>
         </section>
         <main class="main-content">
             <section class="container container-features">
