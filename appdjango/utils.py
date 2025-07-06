@@ -1,23 +1,24 @@
 import os
-import PyPDF2
 from django.conf import settings  #para obtener BASE_DIR
+from .idiomas import mensajes_por_idioma
+from django.http import HttpRequest, HttpResponse
 
 #Django no acepta tkinter porque no es una app de escritorio, entonces cambiamos la manera de obtener el texto
-def leer_texto_manual(texto):
+def leer_texto_manual(texto: str):
     return texto.strip()
 
 def leer_archivo_txt(file_obj):
-    return file_obj.read().decode("utf-8")
+    return file_obj.read().decode("utf-8", errors="ignore")
 
 def leer_pdf(file_obj):
     from PyPDF2 import PdfReader
     texto = ""
     pdf = PdfReader(file_obj)
     for page in pdf.pages:
-        texto += page.extract_text()
+        texto += page.extract_text() or ""
     return texto
 
-def obtener_texto_desde_request(request):
+def obtener_texto_desde_request(request: HttpRequest):
     modo = request.POST.get("modo")
     if modo == "escribir":
         return leer_texto_manual(request.POST.get("texto", ""))
@@ -30,7 +31,7 @@ def obtener_texto_desde_request(request):
                 return leer_pdf(archivo)
     return ""
 
-def detectar_idioma(texto, messages=None):
+def detectar_idioma(texto, mensajes):
     texto = texto.lower()
 
     archivos_idioma = {
@@ -54,20 +55,80 @@ def detectar_idioma(texto, messages=None):
                 puntaje[idioma] += texto.count(palabra)
 
     if all(p == 0 for p in puntaje.values()):
-        return mensajes["no"]
+        return mensajes.get('no')
 
     return max(puntaje, key=puntaje.get)
+
+# Cargar los 4 diccionarios creados
+csv_esp = os.path.join(settings.BASE_DIR,  "idiomas", "espanol.csv")
+csv_ing = os.path.join(settings.BASE_DIR,  "idiomas", "ingles.csv")
+csv_por = os.path.join(settings.BASE_DIR, "idiomas", "portugues.csv")
+csv_jap = os.path.join(settings.BASE_DIR,  "idiomas", "japones.csv") 
+
+def cargar_diccionario(ruta_csv):
+    diccionario = {}
+    with open(ruta_csv, "r", encoding="utf-8") as archivo:
+        lineas = archivo.readlines()
+
+    for linea in lineas[1:]:
+        partes = linea.strip().split(",")
+        if len(partes) < 2:
+            continue
+        grupo = partes[0].strip()
+        palabras = [p.strip() for p in partes[1:] if p.strip()]
+        diccionario[grupo] = palabras
+
+    return diccionario
+
+# Diccionarios por idioma
+diccionarios = {
+    "espanol": cargar_diccionario(csv_esp),
+    "ingles": cargar_diccionario(csv_ing),
+    "portugues": cargar_diccionario(csv_por),
+    "japones": cargar_diccionario(csv_jap)
+}
+
+# Esta función busca la palabra en el idioma del texto
+def sugerir_sinonimos(palabras_10_top, idioma):
+    sugerencias = []
+    dic = diccionarios.get(idioma, {})
+
+    for palabra in palabras_10_top:
+        palabra_buscar = palabra.lower().strip()
+        encontrado = False
+
+        for grupo, lista in dic.items():
+            lista_min = [p.lower() for p in lista]
+            if palabra_buscar in lista_min:
+                sinonimos = [p for p in lista if p.lower() != palabra_buscar]
+                if sinonimos:
+                    sugerencias.append({
+                        "palabra": palabra,
+                        "grupo": grupo,
+                        "sinonimos": sinonimos
+                    })
+                encontrado = True
+                break
+        
+        if not encontrado:
+            sugerencias.append({
+                "palabra": palabra,
+                "grupo": None,
+                "sinonimos": []
+            })
+
+    return sugerencias
 
 import string
 from fugashi import Tagger
 
-def analizar_texto(texto):
+def analizar_texto(texto: str, mensajes):
     total_letras = 0
     palabras = []
     total_frases = 0
     palabra_c = ""
 
-    idioma = detectar_idioma(texto)
+    idioma = detectar_idioma(texto, mensajes)
 
     if idioma == "japones":
         if not texto.endswith("。"):
@@ -113,27 +174,28 @@ def analizar_texto(texto):
     palabra_veces_ord = dict(sorted(palabra_veces.items(), key=lambda x: x[1], reverse=True))
     palabras_mas_veces = dict(list(palabra_veces_ord.items())[:20])
     palabras_5_top = dict(list(palabra_veces_ord.items())[:5])
-    frecuencias_top = frecuencia_porcentual(palabras_5_top, total_palabras)
-    varianza_info = varianza_poblacional(total_veces, palabras_unicas)
+    palabras_10_top = dict(list(palabra_veces_ord.items())[:10])
+    frecuencias_top = frecuencia_porcentual(palabras_5_top, total_palabras, mensajes)
+    varianza_info = varianza_poblacional(total_veces, palabras_unicas, mensajes)
     palabra_moda = palabra_mas_repetida(palabras_5_top)
-    sugerencias_sinonimos = sugerir_sinonimos(palabras_5_top, sinonimos, idioma)
+    sugerencias = sugerir_sinonimos(palabras_10_top, idioma)
     return {
         "idioma": idioma,
         "total_palabras": total_palabras,
         "total_letras": total_letras,
         "total_frases": total_frases,
-        "palabras_top": palabras_top,
+        "palabras_top": palabras_5_top,
         "palabras_frecuencia": palabra_veces_ord,
         "palabras_mas_veces": palabras_mas_veces,
         "frecuencias_clasificadas": frecuencias_top,
         "varianza_info": varianza_info,
         "palabra_moda": palabra_moda,
-        "sugerencias_sinonimos": sugerir_sinonimos,
+        "sugerencias_sinonimos": sugerencias,
     }
 def palabra_mas_repetida(palabras_5_top):
     return {list(palabras_5_top.keys())[0]}
 
-def frecuencia_porcentual(palabras_5_top, total_palabras, mensajes =None):
+def frecuencia_porcentual(palabras_5_top, total_palabras, mensajes):
 
     resultado = {}
 
@@ -151,7 +213,7 @@ def frecuencia_porcentual(palabras_5_top, total_palabras, mensajes =None):
         resultado[palabra] = respuesta
     return resultado
 
-def varianza_poblacional(total_veces, palabras_unicas, mensajes= None):
+def varianza_poblacional(total_veces, palabras_unicas, mensajes):
     #Cálculo de promedio de frecuencia.
     suma_frecuencias = 0
     for i in total_veces:
@@ -164,38 +226,14 @@ def varianza_poblacional(total_veces, palabras_unicas, mensajes= None):
         varianza = nu / len(palabras_unicas)
     #Dependiendo de la varianza que tenga el texto
     if varianza <= 0.2:
-        respuesta = mensajes.get(e)
+        respuesta = mensajes.get('e')
     elif 0.2 < varianza < 0.6:
-        respuesta = mensajes.get(f)
+        respuesta = mensajes.get('f')
     else:
-        respuesta = mensajes.get(g)
+        respuesta = mensajes.get('g')
 
     return {
         "promedio": round(promedio, 2),
         "varianza": round(varianza, 2),
         "respuesta": respuesta
     }
-def sugerir_sinonimos(palabras_5_top, sinonimos, id_sinonimos):
-    idioma_de_sinonimos = sinonimos[id_sinonimos]  
-    sugerencias = []
-
-    for tipo_palabra, listas in idioma_de_sinonimos.items():
-        usados = []  
-
-        for palabra in listas:
-            if palabra in palabras_5_top:
-                usados.append(palabra)
-
-        if len(usados) > 0:
-            sugerencias_tipo = []  
-            for palabra in listas:
-                if palabra not in usados:
-                    sugerencias_tipo.append(palabra)
-
-            if len(sugerencias_tipo) > 0:
-                sugerencias.append({
-                    "tipo": tipo_palabra,
-                    "usados": usados,
-                    "sugerencias": sugerencias_tipo
-                    })
-    return sugerencias 

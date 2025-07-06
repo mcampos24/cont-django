@@ -69,6 +69,7 @@
                 </div>
             </div>
         </section>
+        {% if resultado %}
         <section class="Resultado">
             <h2>Resultado del análisis</h2>
             <ul>
@@ -79,7 +80,7 @@
             <li><strong>Palabra moda:</strong> <span class="badge">{{ resultado.palabra_moda }}</span></li>
             </ul>
 
-            <h3>Palabras más frecuentes (Top 5)</h3>
+            <h3>Palabras más frecuentes (Top 10)</h3>
             <table>
             <thead>
                 <tr><th>Palabra</th><th>Veces</th><th>Comentario</th></tr>
@@ -116,6 +117,7 @@
             Varianza: <strong>{{ resultado.varianza_info.varianza }}</strong><br>
             {{ resultado.varianza_info.respuesta }}
             </p>
+        {% endif %}
         </section>
         <main class="main-content">
             <section class="container container-features">
