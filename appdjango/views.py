@@ -36,10 +36,6 @@ from django.shortcuts import render
 from PyPDF2 import PdfReader
 from fugashi import Tagger
 
-# ---------------------------------------------------------------------------
-#  Carga de sinónimos (espera un «sinonimos.json» con la estructura
-#  {"español": {"verbo": ["…", …], "sustantivo": ["…", …]}, …}
-# ---------------------------------------------------------------------------
 SYN_PATH = os.path.join(settings.BASE_DIR, "idiomas", "sinonimos.json")
 try:
     with open(SYN_PATH, "r", encoding="utf-8") as f:
@@ -47,9 +43,6 @@ try:
 except FileNotFoundError:
     SINONIMOS = {}
 
-# ---------------------------------------------------------------------------
-#  Utilidades de E/S
-# ---------------------------------------------------------------------------
 
 def leer_texto_manual(texto: str) -> str:
     return texto.strip()
@@ -84,9 +77,6 @@ def obtener_texto_desde_request(request: HttpRequest) -> str:
                 return leer_pdf(archivo)
     return ""
 
-# ---------------------------------------------------------------------------
-#  Mensajes y constantes
-# ---------------------------------------------------------------------------
 DEFAULT_MESSAGES = {
     "y": "aparece",
     "z": "y es extremadamente frecuente",
@@ -99,9 +89,7 @@ DEFAULT_MESSAGES = {
     "no": "No se pudo detectar el idioma",
 }
 
-# ---------------------------------------------------------------------------
-#  Detección de idioma
-# ---------------------------------------------------------------------------
+
 
 def detectar_idioma(texto: str, mensajes: Dict[str, str] | None = None) -> str:
     mensajes = mensajes or DEFAULT_MESSAGES
@@ -129,9 +117,6 @@ def detectar_idioma(texto: str, mensajes: Dict[str, str] | None = None) -> str:
         return mensajes["no"]
     return max(puntaje, key=puntaje.get)
 
-# ---------------------------------------------------------------------------
-#  Métricas auxiliares
-# ---------------------------------------------------------------------------
 
 def palabra_mas_repetida(top: Dict[str, int]) -> str:
     return next(iter(top)) if top else ""
@@ -169,10 +154,6 @@ def varianza_poblacional(freqs: List[int], mensajes: Dict[str, str]):
     return {"promedio": round(prom, 2), "varianza": round(var, 2), "respuesta": resp}
 
 
-# ---------------------------------------------------------------------------
-#  Sugeridor de sinónimos
-# ---------------------------------------------------------------------------
-
 def sugerir_sinonimos(top: Dict[str, int], sinonimos: Dict[str, Dict[str, List[str]]], idioma: str):
     datos_idioma = sinonimos.get(idioma, {})
     sugerencias = []
@@ -183,9 +164,7 @@ def sugerir_sinonimos(top: Dict[str, int], sinonimos: Dict[str, Dict[str, List[s
             sugerencias.append({"tipo": tipo, "usados": usados, "sugerencias": restantes})
     return sugerencias
 
-# ---------------------------------------------------------------------------
-#  Analizador principal (idéntico al módulo previo)
-# ---------------------------------------------------------------------------
+
 
 def analizar_texto(texto: str, sinonimos: Dict[str, Dict[str, List[str]]], mensajes: Dict[str, str]):
     total_letras = 0
@@ -195,7 +174,6 @@ def analizar_texto(texto: str, sinonimos: Dict[str, Dict[str, List[str]]], mensa
 
     idioma = detectar_idioma(texto, mensajes)
 
-    # Japones ---------------------------------------------------------------
     if idioma == "japones":
         if not texto.endswith("。"):
             texto += "。"
@@ -207,7 +185,6 @@ def analizar_texto(texto: str, sinonimos: Dict[str, Dict[str, List[str]]], mensa
                 total_letras += len(s)
         total_frases = sum(1 for c in texto if c in "。！？")
 
-    # Alfabéticos -----------------------------------------------------------
     else:
         if not texto.endswith("."):
             texto += "."
@@ -226,7 +203,7 @@ def analizar_texto(texto: str, sinonimos: Dict[str, Dict[str, List[str]]], mensa
 
     total_palabras = len(palabras)
 
-    # Frecuencias -----------------------------------------------------------
+
     conteo: Dict[str, int] = {}
     for p in palabras:
         conteo[p] = conteo.get(p, 0) + 1
@@ -254,9 +231,7 @@ def analizar_texto(texto: str, sinonimos: Dict[str, Dict[str, List[str]]], mensa
         "sugerencias_sinonimos": sug,
     }
 
-# ---------------------------------------------------------------------------
-#  VISTA PRINCIPAL
-# ---------------------------------------------------------------------------
+
 
 def analizar_texto_view(request: HttpRequest) -> HttpResponse:
     """Vista que muestra un formulario (GET) y procesa el análisis (POST)."""
@@ -269,4 +244,4 @@ def analizar_texto_view(request: HttpRequest) -> HttpResponse:
         contexto.update({"resultado": resultado, "texto_analizado": texto})
 
     # Renderiza template – personaliza el nombre según tu estructura
-    return render(request, "resultado.html", contexto)
+    return render(request, "index.html", contexto)

@@ -69,9 +69,8 @@
                 </div>
             </div>
         </section>
-        <section>
+        <section class="Resultado">
             <h2>Resultado del análisis</h2>
-
             <ul>
             <li><strong>Idioma detectado:</strong> {{ resultado.idioma }}</li>
             <li><strong>Total de palabras:</strong> {{ resultado.total_palabras }}</li>
@@ -90,7 +89,7 @@
                 <tr>
                 <td>{{ palabra }}</td>
                 <td>{{ veces }}</td>
-                <td>{{ resultado.frecuencias_clasificadas.get(palabra) }}</td>
+                <td>{{ resultado.frecuencias_clasificadas.palabra }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
