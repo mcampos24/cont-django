@@ -60,7 +60,7 @@ def detectar_idioma(texto, mensajes):
     return max(puntaje, key=puntaje.get)
 
 # Cargar los 4 diccionarios creados
-csv_esp = os.path.join(settings.BASE_DIR,  "idiomas", "espanol.csv")
+csv_esp = os.path.join(settings.BASE_DIR,  "idiomas", "español.csv")
 csv_ing = os.path.join(settings.BASE_DIR,  "idiomas", "ingles.csv")
 csv_por = os.path.join(settings.BASE_DIR, "idiomas", "portugues.csv")
 csv_jap = os.path.join(settings.BASE_DIR,  "idiomas", "japones.csv") 
@@ -82,7 +82,7 @@ def cargar_diccionario(ruta_csv):
 
 # Diccionarios por idioma
 diccionarios = {
-    "espanol": cargar_diccionario(csv_esp),
+    "español": cargar_diccionario(csv_esp),
     "ingles": cargar_diccionario(csv_ing),
     "portugues": cargar_diccionario(csv_por),
     "japones": cargar_diccionario(csv_jap)
@@ -184,7 +184,7 @@ def analizar_texto(texto: str, mensajes):
         "total_palabras": total_palabras,
         "total_letras": total_letras,
         "total_frases": total_frases,
-        "palabras_top": palabras_5_top,
+        "palabras_top": palabras_10_top,
         "palabras_frecuencia": palabra_veces_ord,
         "palabras_mas_veces": palabras_mas_veces,
         "frecuencias_clasificadas": frecuencias_top,
@@ -193,14 +193,14 @@ def analizar_texto(texto: str, mensajes):
         "sugerencias_sinonimos": sugerencias,
     }
 def palabra_mas_repetida(palabras_5_top):
-    return {list(palabras_5_top.keys())[0]}
+    return next(iter(palabras_5_top))
 
-def frecuencia_porcentual(palabras_5_top, total_palabras, mensajes):
+def frecuencia_porcentual(palabras_10_top, total_palabras, mensajes):
 
     resultado = {}
 
-    for palabra in palabras_5_top:
-        frecuencia_porcentual = round(palabras_5_top[palabra] / total_palabras * 100, 2) #Porcentaje de cada palabra en el textos
+    for palabra in palabras_10_top:
+        frecuencia_porcentual = round(palabras_10_top[palabra] / total_palabras * 100, 2) #Porcentaje de cada palabra en el textos
         if frecuencia_porcentual >= 30:
             respuesta = f"{palabra} {mensajes.get('y')} {frecuencia_porcentual} % {mensajes.get('z')}"
         elif frecuencia_porcentual >= 15:

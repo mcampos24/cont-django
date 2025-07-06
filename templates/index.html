@@ -1,4 +1,5 @@
 </DOCTYPE html>
+{% load dict_get %}
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -31,8 +32,8 @@
                     <ul class="Menu">
                         <li><a href="?idioma_i=2">Español</a></li>
                         <li><a href="?idioma_i=1">English</a></li>
-                        <li><a href="?idioma_i=3">Portugues</a></li>
-                        <li><a href="?idioma_i=4">Japones</a></li>
+                        <li><a href="?idioma_i=3">Português</a></li>
+                        <li><a href="?idioma_i=4">日本語</a></li>
                     </ul>
                 </nav>
             </div>
@@ -71,39 +72,45 @@
         </section>
         {% if resultado %}
         <section class="Resultado">
-            <h2>Resultado del análisis</h2>
+            <h2>{{ mensajes.resultado }}</h2>
             <ul>
-            <li><strong>Idioma detectado:</strong> {{ resultado.idioma }}</li>
-            <li><strong>Total de palabras:</strong> {{ resultado.total_palabras }}</li>
-            <li><strong>Total de letras:</strong> {{ resultado.total_letras }}</li>
-            <li><strong>Total de frases:</strong> {{ resultado.total_frases }}</li>
-            <li><strong>Palabra moda:</strong> <span class="badge">{{ resultado.palabra_moda }}</span></li>
+            <li><strong>{{ mensajes.detectado }}</strong> {{ resultado.idioma }}</li>
+            <li><strong>{{ mensajes.palabras }}</strong> {{ resultado.total_palabras }}</li>
+            <li><strong>{{ mensajes.letras }}</strong> {{ resultado.total_letras }}</li>
+            <li><strong>{{ mensajes.frases }}</strong> {{ resultado.total_frases }}</li>
+            <li><strong>{{ mensajes.moda }}</strong> <span class="badge">{{ resultado.palabra_moda }}</span></li>
             </ul>
 
-            <h3>Palabras más frecuentes (Top 10)</h3>
+            <h3>{{ mensajes.top10 }}</h3>
             <table>
             <thead>
-                <tr><th>Palabra</th><th>Veces</th><th>Comentario</th></tr>
+                <tr><th>{{ mensajes.palabra }}</th><th>{{ mensajes.veces }}</th><th>{{ mensajes.comentario }}</th></tr>
             </thead>
             <tbody>
                 {% for palabra, veces in resultado.palabras_top.items %}
                 <tr>
                 <td>{{ palabra }}</td>
                 <td>{{ veces }}</td>
-                <td>{{ resultado.frecuencias_clasificadas.palabra }}</td>
+                <td>{{ resultado.frecuencias_clasificadas|dict_get:palabra }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
             </table>
 
-            <h3>Sugerencias de sinónimos</h3>
+            <h3>{{ mensajes.sugerencias }}</h3>
             {% if resultado.sugerencias_sinonimos %}
             <ul>
                 {% for bloque in resultado.sugerencias_sinonimos %}
-                <li>
-                    <strong>{{ bloque.tipo|capfirst }}:</strong>
-                    Ya usaste <em>{{ bloque.usados|join:", " }}</em>.<br>
-                    Puedes considerar: <em>{{ bloque.sugerencias|join:", " }}</em>.
+                <li>                   
+                    {% if bloque.sinonimos %}
+                    <strong>{{ bloque.grupo|capfirst }}:</strong>
+                    <em>{{ bloque.palabra }}</em>.<br>
+                    {{ mensajes.considera }} <em>{{ bloque.sinonimos|join:", " }}</em>.
+                    {% else %}
+                    <strong>{{ mensajes.nada }}:</strong>
+                    <em>{{ bloque.palabra }}</em>.<br>
+                    {{ mensajes.yausaste }} <em>{{ bloque.palabra }}</em>, {{ mensajes.noencontrado }}
+                    {% endif %}
                 </li>
                 {% endfor %}
             </ul>
@@ -111,12 +118,11 @@
             <p>No hay sugerencias de sinónimos.</p>
             {% endif %}
 
-            <h3>Varianza de frecuencia</h3>
-            <p>
-            Promedio: <strong>{{ resultado.varianza_info.promedio }}</strong> ·
-            Varianza: <strong>{{ resultado.varianza_info.varianza }}</strong><br>
+            <h3>{{ mensajes.varianza }}</h3>
+            <ul>
+            <span class="badge">Varianza: {{ resultado.varianza_info.varianza }}</span></li>
             {{ resultado.varianza_info.respuesta }}
-            </p>
+            <ul>
         {% endif %}
         </section>
         <main class="main-content">
