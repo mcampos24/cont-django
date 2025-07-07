@@ -253,7 +253,7 @@ html{
     background-repeat: no-repeat;
 }
 .categorie-expreso{
-    background: linear-gradient(to bottom right,pink,lightblue);
+    background: linear-gradient(to bottom right,#ffc0cb,lightblue);
     background-size: cover;
     background-position: bottom;
     background-repeat: no-repeat;

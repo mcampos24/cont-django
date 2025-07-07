@@ -175,10 +175,10 @@ def analizar_texto(texto: str, mensajes):
     palabras_mas_veces = dict(list(palabra_veces_ord.items())[:20])
     palabras_5_top = dict(list(palabra_veces_ord.items())[:5])
     palabras_10_top = dict(list(palabra_veces_ord.items())[:10])
-    frecuencias_top = frecuencia_porcentual(palabras_5_top, total_palabras, mensajes)
+    frecuencias_top = frecuencia_porcentual(palabras_10_top, total_palabras, mensajes)
     varianza_info = varianza_poblacional(total_veces, palabras_unicas, mensajes)
     palabra_moda = palabra_mas_repetida(palabras_5_top)
-    sugerencias = sugerir_sinonimos(palabras_10_top, idioma)
+    sugerencias = sugerir_sinonimos(palabras_5_top, idioma)
     return {
         "idioma": idioma,
         "total_palabras": total_palabras,
@@ -196,21 +196,25 @@ def palabra_mas_repetida(palabras_5_top):
     return next(iter(palabras_5_top))
 
 def frecuencia_porcentual(palabras_10_top, total_palabras, mensajes):
-
     resultado = {}
 
     for palabra in palabras_10_top:
-        frecuencia_porcentual = round(palabras_10_top[palabra] / total_palabras * 100, 2) #Porcentaje de cada palabra en el textos
-        if frecuencia_porcentual >= 30:
-            respuesta = f"{palabra} {mensajes.get('y')} {frecuencia_porcentual} % {mensajes.get('z')}"
-        elif frecuencia_porcentual >= 15:
-            respuesta = f"{palabra} {mensajes.get('y')} {frecuencia_porcentual} % {mensajes.get('a')}"
-        elif frecuencia_porcentual < 15 and frecuencia_porcentual >= 5:
-            respuesta = f"{palabra} {mensajes.get('y')} {frecuencia_porcentual} % {mensajes.get('b')}"
-        else:
-            respuesta = f"{palabra} {mensajes.get('y')} {frecuencia_porcentual} % {mensajes.get('d')}"
+        frecuencia = round(palabras_10_top[palabra] / total_palabras * 100, 2)
 
-        resultado[palabra] = respuesta
+        if frecuencia >= 30:
+            comentario = mensajes.get('z')
+        elif frecuencia >= 15:
+            comentario = mensajes.get('a')
+        elif frecuencia >= 5:
+            comentario = mensajes.get('b')
+        else:
+            comentario = mensajes.get('d')
+
+        resultado[palabra] = {
+            "porcentaje": frecuencia,
+            "comentario": f"{palabra} {mensajes.get('y')} {frecuencia}% {comentario}"
+        }
+
     return resultado
 
 def varianza_poblacional(total_veces, palabras_unicas, mensajes):

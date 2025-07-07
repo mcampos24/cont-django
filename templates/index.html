@@ -1,6 +1,7 @@
 </DOCTYPE html>
 {% load dict_get %}
 <html lang="en">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IEmedge">
@@ -91,7 +92,9 @@
                 <tr>
                 <td>{{ palabra }}</td>
                 <td>{{ veces }}</td>
-                <td>{{ resultado.frecuencias_clasificadas|dict_get:palabra }}</td>
+                {% with resultado.frecuencias_clasificadas|dict_get:palabra as palabra %}
+                <td>{{ palabra.comentario }}</td>
+                {% endwith %}
                 </tr>
                 {% endfor %}
             </tbody>
@@ -117,7 +120,35 @@
             {% else %}
             <p>No hay sugerencias de sinónimos.</p>
             {% endif %}
+            {% if resultado %}
+            <h3>Frecuencia de las palabras más comunes</h3>
+            <canvas id="FrecuenciaChart" width="400" height="200"></canvas>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+            const ctx = document.getElementById('FrecuenciaChart').getContext('2d');
+            const labels = {{ labels_json|safe  }};
+            const data = {{ data_json|safe }};
 
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '(%)',
+                        data: data,
+                        backgroundColor: "#ffc0cb",
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+            </script>
+            {% endif %}
             <h3>{{ mensajes.varianza }}</h3>
             <ul>
             <span class="badge">Varianza: {{ resultado.varianza_info.varianza }}</span></li>
