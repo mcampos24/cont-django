@@ -189,6 +189,7 @@ def analizar_texto(texto: str, mensajes):
         "palabras_mas_veces": palabras_mas_veces,
         "frecuencias_clasificadas": frecuencias_top,
         "varianza_info": varianza_info,
+        "frecuencia_todas": palabra_veces,
         "palabra_moda": palabra_moda,
         "sugerencias_sinonimos": sugerencias,
     }
@@ -241,3 +242,23 @@ def varianza_poblacional(total_veces, palabras_unicas, mensajes):
         "varianza": round(varianza, 2),
         "respuesta": respuesta
     }
+
+
+from wordcloud import WordCloud
+def generar_nube_palabras(texto):
+    
+    ruta_directorio = "static/img"
+    os.makedirs(ruta_directorio, exist_ok=True)
+
+    #Crear la nube 
+    nube = WordCloud(
+        width=800,
+        height=400,
+        background_color="#f9f5f0", #fondo de la misma pg
+        colormap="plasma", # puedes usar: 'viridis', 'plasma', 'inferno', 'magma', etc.
+        #font_path="static/fonts/MiFuente.ttf",  #fuente personalizada
+        max_words=100,
+    ).generate(texto)
+
+    #Guardar la imagen
+    nube.to_file("static/img/nube.png")

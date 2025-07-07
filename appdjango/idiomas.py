@@ -1,5 +1,5 @@
 def mensajes_por_idioma(idioma_i):
-    #Cambia el idioma de la interfaz
+    #Cambia el idioma de la interfaz obedeciendo el botón oprimido
     match idioma_i:
         case 1:
             return{

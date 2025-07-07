@@ -1,5 +1,5 @@
 </DOCTYPE html>
-{% load dict_get %}
+{% load dict_get %} <!-- Esto es para que se puedan leer los diccionarios, dirigirse a la función en dict_get -->
 <html lang="en">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
     <head>
@@ -17,7 +17,7 @@
                     <div class="customer-support">
                         <i class="fa-solid fa-headphones"></i>
                         <div class="content-customer-support">
-                            <span class="text"> {{ mensajes.soporte_cliente }} </span>
+                            <span class="text"> {{ mensajes.soporte_cliente }} </span> <!-- Lo que tenga esta estructura mensajes. corresponde al match de idiomas.py -->
                             <span class="number"> 3228930224 </span>
                         </div>
                     </div> 
@@ -31,7 +31,7 @@
                 <nav class="navbar container">
                     <i class="fa-solid fa-bars"></i>
                     <ul class="Menu">
-                        <li><a href="?idioma_i=2">Español</a></li>
+                        <li><a href="?idioma_i=2">Español</a></li> <!-- Esto es lo que acciona al match dependiendo del botón pulsado -->
                         <li><a href="?idioma_i=1">English</a></li>
                         <li><a href="?idioma_i=3">Português</a></li>
                         <li><a href="?idioma_i=4">日本語</a></li>
@@ -45,7 +45,7 @@
                 <h2>CONT+ {{ mensajes.idioma }} <br> {{ mensajes.analizador }}</h2>
 
                 <div class="contenedor-interaccion">
-                    <button class="boton-usar" onclick="mostrarFormulario()" type="button">
+                    <button class="boton-usar" onclick="mostrarFormulario()" type="button"> <!-- Formulario corresponde a dónde se ingresa el texto o archivp -->
                         {{ mensajes.usar }}
                     </button>
 
@@ -53,7 +53,7 @@
                         {% csrf_token %}
                         <label for="modo">{{ mensajes.n }}</label>
                         <select name="modo" id="modo" onchange="mostrarCampos()">
-                            <option value="escribir">{{ mensajes.l }}</option>
+                            <option value="escribir">{{ mensajes.l }}</option> <!-- Las opciones que hay -->
                             <option value="archivo">{{ mensajes.m }}</option>
                         </select>
 
@@ -64,16 +64,16 @@
                         <div id="campoArchivo" style="display:none;">
                             <input type="file" name="archivo">
                         </div>
-
+                        
                         <input type="hidden" name="idioma_i" value="{{ idioma_i }}">
-                        <button type="submit">{{ mensajes.analizar }}</button>
+                        <button type="submit">{{ mensajes.analizar }}</button> <!-- El botón que ya envía todo para las funciones de análisis -->
                     </form>
                 </div>
             </div>
         </section>
         {% if resultado %}
         <section class="Resultado">
-            <h2>{{ mensajes.resultado }}</h2>
+            <h2>{{ mensajes.resultado }}</h2> <!-- Visualización de resultados -->
             <ul>
             <li><strong>{{ mensajes.detectado }}</strong> {{ resultado.idioma }}</li>
             <li><strong>{{ mensajes.palabras }}</strong> {{ resultado.total_palabras }}</li>
@@ -81,8 +81,10 @@
             <li><strong>{{ mensajes.frases }}</strong> {{ resultado.total_frases }}</li>
             <li><strong>{{ mensajes.moda }}</strong> <span class="badge">{{ resultado.palabra_moda }}</span></li>
             </ul>
-
+            <!-- Gráfica de frecuencias -->
             <h3>{{ mensajes.top10 }}</h3>
+            <canvas id="FrecuenciaChart" width="400" height="200"></canvas>
+            <!-- Tabla con la cantidad de veces, la palabra y el comentario -->
             <table>
             <thead>
                 <tr><th>{{ mensajes.palabra }}</th><th>{{ mensajes.veces }}</th><th>{{ mensajes.comentario }}</th></tr>
@@ -99,7 +101,8 @@
                 {% endfor %}
             </tbody>
             </table>
-
+            <h3>Distribución total de palabras (Gráfica de torta)</h3>
+            <canvas id="pieChart" width="200" height="200"></canvas>
             <h3>{{ mensajes.sugerencias }}</h3>
             {% if resultado.sugerencias_sinonimos %}
             <ul>
@@ -121,9 +124,8 @@
             <p>No hay sugerencias de sinónimos.</p>
             {% endif %}
             {% if resultado %}
-            <h3>Frecuencia de las palabras más comunes</h3>
-            <canvas id="FrecuenciaChart" width="400" height="200"></canvas>
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <!-- Aquí está cómo se ven las gráficas -->
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Se pone antes de porque importa cómo se comportan -->
             <script>
             const ctx = document.getElementById('FrecuenciaChart').getContext('2d');
             const labels = {{ labels_json|safe  }};
@@ -148,12 +150,38 @@
                 }
             });
             </script>
+            <!-- Torta-->
+            <script>
+            const ctxPie = document.getElementById('pieChart').getContext('2d');
+            const pieChart = new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: {{ labels_pie|safe }},
+                    datasets: [{
+                        label: 'Frecuencia',
+                        data: {{ data_pie|safe }},
+                        backgroundColor: [
+                    '#f87171', '#fbbf24', '#34d399', '#60a5fa', '#a78bfa',
+                    '#f472b6', '#c084fc', '#facc15', '#4ade80', '#38bdf8',
+                    '#fb7185', '#f97316', '#84cc16', '#22d3ee', '#818cf8'
+                     ],
+                    borderWidth: 1
+                    }]
+                },
+                options: {
+                responsive: true
+            }
+            });
+            </script>
             {% endif %}
             <h3>{{ mensajes.varianza }}</h3>
             <ul>
-            <span class="badge">Varianza: {{ resultado.varianza_info.varianza }}</span></li>
-            {{ resultado.varianza_info.respuesta }}
+            <span class="badge">Varianza: {{ resultado.varianza_info.varianza }} {{ resultado.varianza_info.respuesta }}</span></li>
             <ul>
+            {% if resultado.nube_path %}
+            <h3>Nube de Palabras</h3>
+            <img src="{{ resultado.nube_path }}" alt="Nube de palabras" style="max-width:100%; height:auto;">
+            {% endif %}
         {% endif %}
         </section>
         <main class="main-content">
@@ -197,14 +225,16 @@
                     </div>
                 </div>
             </section>
-        </main>     
+        </main>    
+        <!-- En esta parte se añade una biblioteca que permite cargar el archivo-->
         <script
-            src="https://kit.fontawesome.com/25bd882d70.js"
+            src="https://kit.fontawesome.com/25bd882d70.js" 
             crossorigin="anonymous">
         </script>
-        <script>
+        <!-- Funcion del formulario en javascript, cómo se muestra con animación, además de que permite cambiar entre el campo para escribir texto y el campo para subir archivo (modo)-->
+        <script> 
             function mostrarFormulario() {
-                const form = document.getElementById("formulario-texto");
+                const form = document.getElementById("formulario-texto"); 
                 if (form) {
                     form.style.display = "block";
                     setTimeout(() => {
