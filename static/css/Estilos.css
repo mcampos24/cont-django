@@ -516,7 +516,6 @@ html{
     margin-bottom: 10px;
     font-size: 16px;
 }
-
 /* Badge para palabra moda */
 .badge {
     background-color: #42a5f5;
@@ -559,3 +558,10 @@ em {
 strong {
     color: #1a237e;
 }
+
+/* En resumen del CSS es como se va a organizar el contenido de nuestra pagina
+en esta se definen los colores del fondo, de la letra o de los simbolos. Tambien
+se definen tamaños y ubicaciones de cada uno de los elementos. Con funciones de CSS
+como lo son size, padding, margin, etc. Para cada uno de los elementos del HTML se
+crea una clase, la cual sera modificada en todo su sentido. Todo esto se hace para
+generar un impacto visual lindo.

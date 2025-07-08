@@ -9,9 +9,9 @@
         <title> CONT+ </title>
         {% load static %}
         <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
-    </head>
+    </head> <!--Se crea un encabezado el cual contiene el nombre de nuestro proyecto-->
     <body>
-        <header>
+        <header><!--Esto va a ser lo primero que se va a ver en la parte superior. El nombre de nuestro proyecto un logo, y una pequeña informacion-->
             <div class="container-hero">
                 <div class="container hero">
                     <div class="customer-support">
@@ -27,7 +27,7 @@
                     </div>
                 </div>
             </div>
-            <div class="container-navbar">
+            <div class="container-navbar"><!--Se crea una barra de navegación para cada uno de los idiomas que vamos a manejar-->
                 <nav class="navbar container">
                     <i class="fa-solid fa-bars"></i>
                     <ul class="Menu">
@@ -39,12 +39,12 @@
                 </nav>
             </div>
         </header>
-        <section class="banner">
+        <section class="banner"> <!--Se hace la parte principal en la cual se va a ingresar el texto a analizar-->
             <div class="content-banner">
                 <p>{{ mensajes.puedes_ver }}</p>
                 <h2>CONT+ {{ mensajes.idioma }} <br> {{ mensajes.analizador }}</h2>
 
-                <div class="contenedor-interaccion">
+                <div class="contenedor-interaccion"> <!--Se crea un boton de interacción que hara entrada para que se pueda ingresar el texto.-->
                     <button class="boton-usar" onclick="mostrarFormulario()" type="button"> <!-- Formulario corresponde a dónde se ingresa el texto o archivp -->
                         {{ mensajes.usar }}
                     </button>
@@ -70,7 +70,7 @@
                     </form>
                 </div>
             </div>
-        </section>
+        </section> <!--Se crea la sección de resultados que solo aparecera cuando hay un texto ya analizado-->
         {% if resultado %}
         <section class="Resultado">
             <h2>{{ mensajes.resultado }}</h2> <!-- Visualización de resultados -->
@@ -183,7 +183,7 @@
             <img src="{{ resultado.nube_path }}" alt="Nube de palabras" style="max-width:100%; height:auto;">
             {% endif %}
         {% endif %}
-        </section>
+        </section><!--Se crea una sección adicional. La cual mostrara las funciones de nuestra pagina web-->
         <main class="main-content">
             <section class="container container-features">
                 <div class="card-feature">

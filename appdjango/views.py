@@ -1,10 +1,10 @@
 from __future__ import annotations
-from django.shortcuts import render
+from django.shortcuts import render # Esta es la funcion que genera una respuesta en el HTML
 from .utils import obtener_texto_desde_request, analizar_texto, detectar_idioma, analizar_texto, generar_nube_palabras
-from .idiomas import mensajes_por_idioma
-import json
+from .idiomas import mensajes_por_idioma #Se importan los demas archivos con los que se va a trabajar.
+import json #Ayuda a convertir listas o diccionarios a texto en formato JSON
 
-def inicio(request):
+def inicio(request): #Función que se activa cuando alguien entra a la pagina principal
     idioma_i = int(request.GET.get("idioma_i", 2))  # Español por defecto
     mensajes = mensajes_por_idioma(idioma_i)
     resultado = None
@@ -16,16 +16,16 @@ def inicio(request):
     labels_pie = json.dumps([])
     data_pie = json.dumps([])
 
-    if request.method == "POST":
+    if request.method == "POST": #Se ejecuta esto si se envia un texto
         idioma_i = int(request.POST.get("idioma_i", idioma_i))
-        mensajes = mensajes_por_idioma(idioma_i)
-        texto_usuario = obtener_texto_desde_request(request)
+        mensajes = mensajes_por_idioma(idioma_i) #Se vuelve a obtener el idioma, pero desde el texto.
+        texto_usuario = obtener_texto_desde_request(request) #Se extrae el texto que ha escrito la persona.
 
-        if texto_usuario.strip():
-            generar_nube_palabras(texto_usuario)
+        if texto_usuario.strip(): #Se verifica que el texto no este vacio
+            generar_nube_palabras(texto_usuario) #Se crea una imagen como nube de palabras
             idioma_detectado = detectar_idioma(texto_usuario, mensajes)
             resultado = analizar_texto(texto_usuario, mensajes)
-            resultado["idioma"] = idioma_detectado
+            resultado["idioma"] = idioma_detectado #Se realiza el analisis del texto.
 
             # Extraer datos para la gráfica de barras
             frecuencias = resultado.get("frecuencias_clasificadas", {})
