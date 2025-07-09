@@ -59,3 +59,208 @@ apertura,diferente,distinto,variado,diverso
 pensamiento,igual,semejante,similar,equivalente
 búsqueda,motivar,estimular,animar,impulsar
 espera,final,conclusión,término,desenlace
+acción,hacer,realizar,ejecutar,desarrollar
+expresión,decir,mencionar,expresar,afirmar
+uso,usar,emplear,utilizar,aplicar
+visión,ver,observar,notar,percibir
+posesión,tener,poseer,contar con,disponer de
+importancia,importante,relevante,significativo,esencial
+problema,problema,dificultad,obstáculo,inconveniente
+solución,solución,respuesta,alternativa,remedio
+ayuda,ayudar,colaborar,apoyar,asistir
+necesidad,necesario,imprescindible,obligatorio,indispensable
+grande,grande,amplio,extenso,considerable
+pequeño,pequeño,reducido,limitado,mínimo
+positivo,bueno,adecuado,positivo,favorable
+negativo,malo,negativo,inadecuado,perjudicial
+logro,lograr,alcanzar,conseguir,obtener
+explicación,explicar,aclarar,describir,detallar
+mejora,mejorar,optimizar,perfeccionar,reforzar
+cambio,cambiar,modificar,ajustar,transformar
+causa,causa,motivo,origen,razón
+efecto,efecto,resultado,consecuencia,impacto
+rapidez,rápido,ágil,veloz,acelerado
+lentitud,lento,pausado,despacio,tardío
+novedad,nuevo,reciente,moderno,actual
+antigüedad,viejo,antiguo,pasado,obsoleto
+expresividad,expresión,manifestación,declaración,enunciado
+conocimiento,conocer,entender,comprender,saber
+diferencia,diferente,distinto,variado,diverso
+igualdad,igual,semejante,similar,equivalente
+motivación,motivar,estimular,animar,impulsar
+final,final,conclusión,término,desenlace
+inicio,hacer,realizar,ejecutar,desarrollar
+evaluación,decir,mencionar,expresar,afirmar
+duda,usar,emplear,utilizar,aplicar
+decisión,ver,observar,notar,percibir
+observación,tener,poseer,contar con,disponer de
+sentimiento,importante,relevante,significativo,esencial
+lectura,problema,dificultad,obstáculo,inconveniente
+escritura,solución,respuesta,alternativa,remedio
+viaje,ayudar,colaborar,apoyar,asistir
+residencia,necesario,imprescindible,obligatorio,indispensable
+trabajo,grande,amplio,extenso,considerable
+estudio,pequeño,reducido,limitado,mínimo
+escucha,bueno,adecuado,positivo,favorable
+elección,malo,negativo,inadecuado,perjudicial
+creación,lograr,alcanzar,conseguir,obtener
+compra,explicar,aclarar,describir,detallar
+venta,mejorar,optimizar,perfeccionar,reforzar
+cuidado,cambiar,modificar,ajustar,transformar
+peligro,causa,motivo,origen,razón
+objetivo,efecto,resultado,consecuencia,impacto
+error,rápido,ágil,veloz,acelerado
+camino,lento,pausado,despacio,tardío
+mostrar,nuevo,reciente,moderno,actual
+construcción,viejo,antiguo,pasado,obsoleto
+destrucción,expresión,manifestación,declaración,enunciado
+cierre,conocer,entender,comprender,saber
+apertura,diferente,distinto,variado,diverso
+pensamiento,igual,semejante,similar,equivalente
+búsqueda,motivar,estimular,animar,impulsar
+espera,final,conclusión,término,desenlace
+sabiduría,sabio,inteligente,erudito,culto
+sabiduría,listo,astuto,ingenioso,perspicaz
+valentía,valiente,intrépido,audaz,decidido
+valentía,osado,atrevido,resuelto,arrojado
+rapidez,rápido,veloz,ligero,ágil
+rapidez,fugaz,precipitado,apresurado,acelerado
+belleza,hermoso,bello,atractivo,precioso
+belleza,lindo,bonito,guapo,encantador
+oscuridad,oscuro,tenebroso,sombrío,apagado
+oscuridad,opaco,negruzco,lúgubre,grisáceo
+claridad,claro,luminoso,brillante,transparente
+claridad,nítido,resplandeciente,iluminado,cristalino
+ruido,ruidoso,estridente,ensordecedor,bullicioso
+ruido,fuerte,retumbante,tronador,escandaloso
+felicidad,feliz,contento,alegre,jubiloso
+felicidad,entusiasmado,animado,gozoso,satisfecho
+comida,alimento,comida,manjar,platillo
+comida,cena,almuerzo,desayuno,tentempié
+agua,agua,líquido,bebida,fluido
+agua,chorro,gota,riachuelo,caudal
+inteligencia,inteligente,brillante,lúcido,razonable
+tristeza,triste,afligido,abatido,melancólico
+alegría,alegre,contento,jubiloso,gozoso
+rapidez,rápido,veloz,ligero,fugaz
+lentitud,lento,pausado,calmado,despacio
+amabilidad,amable,cordial,afable,atento
+fuerza,fuerte,robusto,potente,sólido
+debilidad,débil,frágil,vulnerable,endeble
+limpieza,limpio,aseado,pulcro,higiénico
+suciedad,sucio,manchado,desordenado,contaminado
+luz,luminoso,brillante,resplandeciente,claro
+oscuridad,oscuro,tenebroso,apagado,lúgubre
+silencio,silencioso,callado,mudo,tranquilo
+ruido,ruidoso,estridente,ensordecedor,bullicioso
+valor,valiente,intrépido,osado,atrevido
+miedo,asustado,atemorizado,espantado,temeroso
+amistad,amigo,compañero,camarada,colega
+enemistad,enemigo,oponente,adversario,rival
+inicio,comienzo,principio,inicio,arranque
+fin,final,término,culminación,conclusión
+felicidad,feliz,contento,alegre,satisfecho
+tristeza,triste,melancólico,deprimido,afligido
+feliz,alegre,contento,jubiloso,satisfecho
+triste,melancólico,afligido,deprimido,nostálgico
+rápido,veloz,ágil,ligero,acelerado
+lento,pausado,despacio,tardo,moroso
+inteligente,listo,sabio,ingenioso,perspicaz
+fuerte,robusto,resistente,sólido,potente
+débil,frágil,endeble,vulnerable,quebradizo
+amigo,compañero,aliado,camarada,colega
+enemigo,adversario,rival,oponente,contrincante
+valiente,intrépido,audaz,osado,decidido
+miedoso,temeroso,asustado,cobarde,aprensivo
+hermoso,bello,atractivo,precioso,bonito
+feo,desagradable,horrible,espantoso,antiestético
+limpio,aseado,pulcro,higiénico,ordenado
+sucio,manchado,mugriento,grasiento,desordenado
+silencioso,callado,tranquilo,mudo,sereno
+ruidoso,estridente,bullicioso,ensordecedor,escandaloso
+nuevo,reciente,moderno,actual,reciente
+viejo,antiguo,usado,pasado,añejo
+grande,enorme,amplio,extenso,gigante
+pequeño,chico,diminuto,reducido,menor
+fácil,simple,sencillo,claro,accesible
+difícil,complicado,complejo,duro,arduo
+cerca,próximo,adjunto,contiguo,inmediato
+lejos,distante,remoto,apartado,alejado
+alto,elevado,grande,superior,levantado
+bajo,pequeño,reducido,inferior,hundido
+rico,adinerado,acomodado,opulento,próspero
+pobre,necesitado,humilde,carente,desfavorecido
+rápido,exprés,fugaz,instantáneo,precipitado
+lento,lánguido,ralentizado,retardado,demorado
+duro,rígido,firme,sólido,compacto
+blando,suave,débil,flojo,tierno
+oscuro,tenebroso,sombrío,apagado,opaco
+claro,luminoso,brillante,iluminado,nítido
+contento,satisfecho,alegre,entusiasmado,gozoso
+enojado,molesto,furioso,irritado,indignado
+tranquilo,calmado,sosegado,relajado,sereno
+nervioso,ansioso,inquieto,alterado,tenso
+cansado,agotado,fatigado,extenuado,rendido
+energético,activo,vital,dinámico,vivaz
+hablar,conversar,charlar,dialogar,comunicar
+ver,mirar,observar,contemplar,notar
+caminar,andar,pasear,marchar,deambular
+correr,galopar,apresurarse,sprintar,huir
+subir,ascender,escalar,elevarse,trepar
+bajar,descender,caer,hundirse,agacharse
+pensar,reflexionar,meditar,razonar,considerar
+leer,estudiar,repasar,ojear,consultar
+escribir,anotar,redactar,apuntar,transcribir
+decir,expresar,manifestar,comunicar,relatar
+ayudar,asistir,colaborar,socorrer,auxiliar
+entender,comprender,asimilar,captar,interpretar
+romper,quebrar,desgarrar,fragmentar,rajar
+arreglar,reparar,restaurar,componer,ajustar
+vender,comerciar,ofrecer,negociar,intercambiar
+comprar,adquirir,obtener,conseguir,negociar
+viajar,desplazarse,moverse,trasladarse,explorar
+comenzar,iniciar,empezar,arrancar,abrir
+terminar,acabar,concluir,finalizar,cerrar
+verano,estival,cálido,soleado,caluroso
+invierno,frío,invernal,helado,nevado
+primavera,floreado,renovado,colorido,templado
+otoño,hojas,fresco,melancólico,nublado
+aunque,sin embargo,no obstante,a pesar de,aun así
+porque,ya que,puesto que,debido a,dado que
+además,también,asimismo,igualmente,incluso
+por lo tanto,así que,en consecuencia,por consiguiente,de modo que
+pero,sin embargo,aunque,aun así,no obstante
+entonces,luego,después,por consiguiente,por ende
+mientras,durante,en tanto,al tiempo que,a la vez que
+sin,careciendo de,falta de,ausente de,excepto
+con,junto a,acompañado de,incluyendo,mediante
+antes,previo,anteriormente,precedente,con anticipación
+después,luego,posteriormente,más tarde,a continuación
+aunque,si bien,a pesar de que,por más que,no obstante
+incluso,aun,hasta,inclusive,también
+ni,tampoco,y no,ni siquiera,sin
+o,u,ya sea,o bien,de otra manera
+y,además,también,asimismo,junto con
+sobre,acerca de,respecto a,en relación a,a propósito de
+bajo,debajo de,inferior a,por debajo de,a los pies de
+detrás,en la parte posterior,tras,a espaldas de,al fondo de
+delante,en frente de,en la parte delantera,ante,al frente
+sin embargo,no obstante,aunque,aun así,por el contrario
+por ejemplo,como,tal como,en concreto,en particular
+por eso,por lo tanto,así que,en consecuencia,de ahí que
+para,con el objetivo de,a fin de,con el propósito de,destinado a
+según,conforme a,de acuerdo con,a tenor de,siguiendo
+debido a,a causa de,por culpa de,por motivo de,gracias a
+entre,en medio de,en el centro de,rodeado de,dentro de
+hasta,incluso,a,al punto de,al final de
+como,tal como,igual que,de la misma manera,según
+cuando,al momento que,en el instante que,mientras,en cuanto
+donde,en el lugar que,en el sitio que,allí,en ese punto
+ya que,puesto que,porque,dado que,en vista de que
+de hecho,en realidad,realmente,ciertamente,efectivamente
+claro,por supuesto,desde luego,evidentemente,naturalmente
+quizás,tal vez,posiblemente,acaso,probablemente
+luego,después,a continuación,posteriormente,enseguida
+finalmente,por último,en conclusión,para terminar,al final
+al principio,al inicio,al comenzar,inicialmente,en el comienzo
+mientras tanto,en ese momento,durante,a la vez,al mismo tiempo
