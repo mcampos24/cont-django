@@ -103,6 +103,7 @@ hard
 have
 he
 help
+hello
 high
 how
 however
