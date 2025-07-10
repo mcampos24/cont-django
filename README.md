@@ -11,3 +11,5 @@ https://github.com/ikegami-yukino/mecab/releases
   Nombre: MECABRC
   Valor: C:\Program Files\MeCab\etc\mecabrc
   Reinicia tu terminal o VSCode para que tome la variable.
+
+Si eso no funciona entonces descarga la libreria de fugashi ligera por la terminal:  pip install fugashi[unidic-lite] (Tiene menos vocabulario pero funciona)
