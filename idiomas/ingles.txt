@@ -51,7 +51,6 @@ cry
 danger
 dark
 darkness
-decision
 destruction
 difference
 different
@@ -69,7 +68,6 @@ enemy
 energetic
 enmity
 equality
-error
 evaluation
 even
 explain
@@ -112,7 +110,6 @@ importance
 important
 improve
 improvement
-inside
 intelligence
 intelligent
 is
