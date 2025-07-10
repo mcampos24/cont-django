@@ -61,7 +61,7 @@ dirty
 do
 doubt
 dream
-due to
+due
 easy
 effect
 end
@@ -111,7 +111,6 @@ importance
 important
 improve
 improvement
-in front
 inside
 intelligence
 intelligent
@@ -144,7 +143,6 @@ nor
 novelty
 objective
 observation
-of made
 old
 opening
 or
