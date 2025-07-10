@@ -48,6 +48,7 @@ def detectar_idioma(texto, mensajes):
     }
     #Se crea un diccionario para registrar los puntajes de coincidencias por idioma
     puntaje = {idioma: 0 for idioma in archivos_idioma}
+    palabras_texto = texto.lower().split() #cambié esto, resulta que pues tocaba poner el texto como lista para que se recorriera bien, por eso no detectaba antes
 
     #Se recorre cada idioma y su archivo correspondiente
     for idioma, archivo in archivos_idioma.items():
@@ -63,9 +64,9 @@ def detectar_idioma(texto, mensajes):
 
         #Se busca palabras del archivo que esten dentro del texto ingresado
         for palabra in palabras:
-            if palabra in texto:
+            if palabra in palabras_texto: #la lista de las palabras de los idiomas recorre la del texto y mira si hay similares
                 #Se suma al puntaje cuantas veces aparece esa palabra en el texto
-                puntaje[idioma] += texto.count(palabra)
+                puntaje[idioma] += 1 #si sí, suma al puntaje
 
     #Si ningún idioma obtuvo puntaje (0 coincidencias en todos), no se detectó idioma
     if all(p == 0 for p in puntaje.values()):
