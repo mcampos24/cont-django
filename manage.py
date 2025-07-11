@@ -3,7 +3,7 @@
 import os
 import sys
 
-
+#este archivo corre el servidor (django)
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cont.settings')

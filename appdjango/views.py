@@ -22,8 +22,9 @@ def inicio(request): #Función que se activa cuando alguien entra a la pagina pr
         texto_usuario = obtener_texto_desde_request(request) #Se extrae el texto que ha escrito la persona.
 
         if texto_usuario.strip(): #Se verifica que el texto no este vacio
-            generar_nube_palabras(texto_usuario) #Se crea una imagen como nube de palabras
+            
             idioma_detectado = detectar_idioma(texto_usuario, mensajes)
+            generar_nube_palabras(texto_usuario, idioma_detectado) #Se crea una imagen como nube de palabras
             resultado = analizar_texto(texto_usuario, mensajes)
             resultado["idioma"] = idioma_detectado #Se realiza el analisis del texto.
 

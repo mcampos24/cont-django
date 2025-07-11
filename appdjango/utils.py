@@ -38,36 +38,33 @@ def obtener_texto_desde_request(request: HttpRequest): #ir a views para visualiz
 
 # En estos apartados se hace la adaptación al cuaderno de colab para una mayor organización en funciones.
 #Pre-inicializa el tagger de japonés
-TAGGER = Tagger()
 
-def detectar_idioma(texto: str, mensajes: dict): #daba un montón de errores entonces aquí por si algo se le condiciona a ser string
-    texto = texto.strip()
-    #tokenizamos:
-    if re.search(r'[\u3000-\u303F\u3040-\u309F\u30A0-\u30FF]', texto): #el re permite la búsqueda de esos carácteres
-        #Contiene caracteres japoneses usando fugashi
-        tokens = [t.surface for t in TAGGER(texto)] #Los "tokens superficiales" son las palabras tal como aparecen, en analizar texto se ve prácticamente esta misma línea, solo que con otras variables.
-    else:
-        #extraemos palabras latinas completas, (si no es japonés, extraemos palabras normales (letras, números, etc.))
-        tokens = re.findall(r'\b\w+\b', texto.lower()) #nuevamente un re para buscar, todo esto en la cadena en minúsculas
-
+def detectar_idioma(texto: str, mensajes): #daba un montón de errores entonces aquí por si algo se le condiciona a ser string
+    texto = texto.lower()
     archivos = {
         #Diccionario que asocia cada idioma con su archivo .txt de palabras mas usadas
-        "español": "español.txt",
-        "portugues": "portugues.txt",
-        "ingles":  "ingles.txt",
-        "japones": "japones.txt",
+        "Español": "español.txt",
+        "Português": "portugues.txt",
+        "English":  "ingles.txt",
+        "日本語": "japones.txt",
     }
     puntaje = {} #aquí se registrapan los puntajes por idioma
-    for idioma, archivo in archivos.items(): #por los archivos de texto
-        #Se abre y lee el archivo con palabras clave del idioma (usando "utf-8" como codificación)
-        path = os.path.join(settings.BASE_DIR, "idiomas", archivo)
-        if not os.path.exists(path):
-            puntaje[idioma] = 0 #el puntaje de los idiomas será 0 para evitar error si el archivo no existe
+    for idioma, archivo in archivos.items(): #por los archivos de texto      
+        puntaje[idioma] = 0 #inicializar contador vacíon
+        ruta = os.path.join(settings.BASE_DIR, "idiomas", archivo)
+        if not os.path.exists(ruta): #para evitar error si el archivo no es encontrado
             continue 
-        palabras_clave = open(path, encoding="utf-8").read().lower().split()
-        #contamos cuántas palabras del texto están en las palabras clave
-        contador = sum(1 for w in tokens if w.lower() in palabras_clave)
-        puntaje[idioma] = contador #cuántas por cada idioma
+        palabras_archivo = open(ruta, encoding="utf-8").read().lower().split()#Se abre y lee el archivo con palabras clave del idioma (usando "utf-8" como codificación)
+        
+        if idioma == "日本語": #cuando pase por el archivo de japonés debemos de inicializar fugashi
+            tagger = Tagger() #permite la tokenización 
+            palabras_texto = [token.surface for token in tagger(texto)] #En la función de análisis de texto se ve de manera similar, con el texto tokenizado recorremos el texto
+        else:
+            palabras_texto = texto.split() #si no es el archivo de japonés entonces simplemente partimos el texto por palabras
+
+        for palabra in palabras_archivo: #contamos cuántas palabras del texto están en las palabras clave (comenzamos a comparar)
+            if palabra in palabras_texto:
+                puntaje[idioma] += 1  #si sí se encuentra en el txt entonces sumamos una coincidencia al diccionario
 
      #Si ningún idioma obtuvo puntaje (0 coincidencias en todos), no se detectó idioma
     if all(p == 0 for p in puntaje.values()):
@@ -100,10 +97,10 @@ def cargar_diccionario(ruta_csv):
 
 # Diccionarios por idioma
 diccionarios = {
-    "español": cargar_diccionario(csv_esp),
-    "ingles": cargar_diccionario(csv_ing),
-    "portugues": cargar_diccionario(csv_por),
-    "japones": cargar_diccionario(csv_jap)
+    "Español": cargar_diccionario(csv_esp),
+    "English": cargar_diccionario(csv_ing),
+    "Português": cargar_diccionario(csv_por),
+    "日本語": cargar_diccionario(csv_jap)
 }
 
 # Esta función busca la palabra en el idioma del texto
@@ -151,7 +148,7 @@ def analizar_texto(texto: str, mensajes):
     idioma = detectar_idioma(texto, mensajes)
 
     #para japonés
-    if idioma == "japones": 
+    if idioma == "日本語": 
         if not texto.endswith("。"): #Por si el usuario no pone un punto al final, para que el programa cuente la última frase
             texto += "。"
         tagger = Tagger()  #Crea un analizador morfológico japonés
@@ -272,10 +269,17 @@ def varianza_poblacional(total_veces, palabras_unicas, mensajes):
 
 
 from wordcloud import WordCloud
-def generar_nube_palabras(texto): #la nube se genera a partir del texto limpio
+def generar_nube_palabras(texto, idioma): #la nube se genera a partir del texto limpio
     
-    ruta_directorio = "static/img"
-    os.makedirs(ruta_directorio, exist_ok=True)
+    ruta_directorio = "static/img" #aquí se guarda la imágen
+    os.makedirs(ruta_directorio, exist_ok=True) #
+    #wordcloud hace la nube a partir de las palabras que detecta (separadas por espacio, como el japonés no se separa así entonces...)
+    if idioma == "日本語":
+        tagger = Tagger()
+        tokens = [token.surface for token in tagger(texto) if token.surface not in {"。", "、"}] #después de cada token, coma o punto
+        textobueno = " ".join(tokens) #se separan por espacio, y ese será el texto a evaluar
+    else:
+        textobueno = texto #si no es japonés se evalúa con normalidad
 
     #Crear la nube 
     nube = WordCloud(
@@ -285,7 +289,7 @@ def generar_nube_palabras(texto): #la nube se genera a partir del texto limpio
         colormap="plasma",
         font_path="static/fuente/notosans.ttf",  #se añade una fuente que soporta los carácteres japoneses
         max_words=100,
-    ).generate(texto)
+    ).generate(textobueno)
 
     #Guardar la imagen
     nube.to_file("static/img/nube.png") #posteriormente en views, se muestra (ver views y html)
