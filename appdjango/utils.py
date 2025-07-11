@@ -5,12 +5,39 @@ from django.http import HttpRequest
 from fugashi import Tagger
 
 #Django no acepta tkinter porque no es una app de escritorio, entonces cambiamos la manera de obtener el texto
+"""
+Lee y limpia manualmente un texto ingresado directamente por el usuario.
+
+Entradas:
+    texto (str): Texto ingresado desde el formulario en forma de cadena.
+
+Salidas:
+    str: Texto sin espacios innecesarios al inicio o final.
+"""
 def leer_texto_manual(texto: str):
     return texto.strip() #si es un texto normal tipo str simplemente lo dividimos
 
+"""
+Lee un archivo de texto (.txt) cargado por el usuario.
+
+Entradas:
+    file_obj: Objeto de archivo recibido desde el formulario (tipo .txt).
+
+Salidas:
+    str: Contenido del archivo leído y decodificado en UTF-8.
+"""
 def leer_archivo_txt(file_obj):
     return file_obj.read().decode("utf-8", errors="ignore") #si es un archivo txt lo leemos en utf-8 y si existe algún error, lo ignoramos
 
+"""
+Extrae el texto completo de un archivo PDF.
+
+Entradas:
+    file_obj: Objeto de archivo en formato PDF.
+
+Salidas:
+    str: Texto concatenado de todas las páginas del archivo.
+"""
 def leer_pdf(file_obj): #para leer el pdf usamos las librerías correspondientes
     from PyPDF2 import PdfReader 
     texto = "" #comienza vacío
@@ -20,6 +47,15 @@ def leer_pdf(file_obj): #para leer el pdf usamos las librerías correspondientes
     return texto #retornamos el texto acomulado
 
 #para el formulario donde se envía el texto
+"""
+Obtiene y procesa el texto enviado por el usuario desde una solicitud POST de Django.
+
+Entradas:
+    request (HttpRequest): Objeto de solicitud HTTP con el texto o archivo.
+
+Salidas:
+    str: Texto limpio extraído manualmente o desde archivo (txt o pdf), o vacío en caso de error.
+"""
 def obtener_texto_desde_request(request: HttpRequest): #ir a views para visualizar request
     modo = request.POST.get("modo") #dependiendo de la selección se determinada el modo en el que el usuario va a subir las cosas
     if modo == "escribir":
@@ -37,8 +73,18 @@ def obtener_texto_desde_request(request: HttpRequest): #ir a views para visualiz
     return "" #Si no se detecta ningún texto válido o el modo no está definido, se retorna una cadena vacía
 
 # En estos apartados se hace la adaptación al cuaderno de colab para una mayor organización en funciones.
-#Pre-inicializa el tagger de japonés
 
+"""
+Detecta el idioma de un texto ingresado analizando la coincidencia de palabras y caracteres típicos.
+
+Entradas:
+    texto (str): Texto de entrada en cualquier idioma (español, portugués, japonés o inglés).
+    mensajes (dict): Diccionario de mensajes multilingües.
+
+Salidas:
+    str: El nombre del idioma detectado ('Español', 'Português', 'English', '日本語'),
+         o mensaje de idioma no identificado.
+"""
 def detectar_idioma(texto: str, mensajes): #daba un montón de errores entonces aquí por si algo se le condiciona a ser string
     texto = texto.lower()
     archivos = {
@@ -72,6 +118,16 @@ def detectar_idioma(texto: str, mensajes): #daba un montón de errores entonces 
     #Se retorna el idioma con el puntaje más alto (el más probable), si hay empate, max() escoge el primero en orden dict
     return max(puntaje, key=puntaje.get)
 
+"""
+Carga un archivo CSV de sinónimos agrupados por categoría para un idioma.
+
+Entradas:
+    ruta_csv (str): Ruta al archivo CSV correspondiente al idioma.
+
+Salidas:
+    dict: Diccionario donde las claves son grupos y los valores son listas de palabras.
+"""
+
 # Cargar los 4 diccionarios creados
 csv_esp = os.path.join(settings.BASE_DIR,  "idiomas", "español.csv")
 csv_ing = os.path.join(settings.BASE_DIR,  "idiomas", "ingles.csv")
@@ -103,8 +159,18 @@ diccionarios = {
     "日本語": cargar_diccionario(csv_jap)
 }
 
-# Esta función busca la palabra en el idioma del texto
-def sugerir_sinonimos(palabras_10_top, idioma):
+"""
+Sugiere sinónimos para las palabras más repetidas, según el idioma del texto.
+
+Entradas:
+    palabras_10_top (dict): Diccionario con las palabras más frecuentes.
+    idioma (str): Idioma detectado del texto.
+
+Salidas:
+    list: Lista de diccionarios con sugerencias de sinónimos por palabra.
+"""
+
+def sugerir_sinonimos(palabras_10_top, idioma): # Esta función busca la palabra en el idioma del texto
     sugerencias = [] #lista para almacenar los resultados (sugerencias de sinónimos)
     dic = diccionarios.get(idioma, {}) #Obtiene el diccionario correspondiente al idioma; si no existe, devuelve {}
 
@@ -137,8 +203,17 @@ def sugerir_sinonimos(palabras_10_top, idioma):
     return sugerencias #Devuelve la lista de sugerencias generadas
 
 import string
+"""
+Realiza un análisis completo del texto, incluyendo estadísticas, idioma, y sugerencias de sinónimos.
+Limpieza de cadena y contador de letras, frases y palabras (Esta es la función principal a la que los views recurren, por eso su return es un diccionario con los resultados de las demás funciones)
 
-#Limpieza de cadena y contador de letras, frases y palabras (Esta es la función principal a la que los views recurren, por eso su return es un diccionario con los resultados de las demás funciones)
+Entradas:
+    texto (str): Texto que se desea analizar.
+    mensajes (dict): Diccionario de mensajes por idioma.
+
+Salidas:
+    dict: Diccionario con los resultados del análisis (idioma, conteo, frecuencia, moda, varianza, sinónimos, etc.).
+"""
 def analizar_texto(texto: str, mensajes):
     total_letras = 0 #Contador de letras
     palabras = [] #Lista de todas las palabras del texto
@@ -210,6 +285,16 @@ def analizar_texto(texto: str, mensajes):
         "palabra_moda": palabra_moda,
         "sugerencias_sinonimos": sugerencias,
     }
+
+"""
+Determina la palabra más repetida entre las más frecuentes.
+
+Entradas:
+    palabras_5_top (dict): Diccionario de palabras más comunes y sus conteos.
+
+Salidas:
+    str: Palabra más repetida o varias separadas por coma si hay empate.
+"""
 def palabra_mas_repetida(palabras_5_top):
     if not palabras_5_top: #Si no se encuentra nada (prevenir errores)
         return ""
@@ -218,6 +303,17 @@ def palabra_mas_repetida(palabras_5_top):
     palabras_max = [p for p, v in palabras_5_top.items() if v == max_veces] #es para que imprima las más repetidas y que tenga en cuenta si 2 o más se repiten la misma cantidad
     return ", ".join(palabras_max) #se separan por comas si es que hay más de una, sino, pues sólo es la palabra única.
 
+"""
+Calcula el porcentaje de aparición de palabras frecuentes y genera comentarios asociados.
+
+Entradas:
+    palabras_10_top (dict): Diccionario de palabras frecuentes y sus conteos.
+    total_palabras (int): Número total de palabras en el texto.
+    mensajes (dict): Diccionario de mensajes por idioma.
+
+Salidas:
+    dict: Diccionario con porcentajes y comentarios para cada palabra frecuente.
+"""
 def frecuencia_porcentual(palabras_10_top, total_palabras, mensajes):
     resultado = {}
 
@@ -240,6 +336,18 @@ def frecuencia_porcentual(palabras_10_top, total_palabras, mensajes):
         }
 
     return resultado #retornamos el diccionario
+
+"""
+Calcula la varianza poblacional de la frecuencia de palabras y clasifica el resultado.
+
+Entradas:
+    total_veces (list): Lista de frecuencias de palabras únicas.
+    palabras_unicas (list): Lista de palabras únicas encontradas.
+    mensajes (dict): Diccionario de mensajes por idioma.
+
+Salidas:
+    dict: Diccionario con el promedio, varianza y un mensaje descriptivo.
+"""
 
 def varianza_poblacional(total_veces, palabras_unicas, mensajes):
     #Cálculo de promedio de frecuencia.
@@ -267,12 +375,22 @@ def varianza_poblacional(total_veces, palabras_unicas, mensajes):
     }
 
 
+"""
+Genera una nube de palabras a partir del texto ingresado y la guarda como imagen.
+
+Entradas:
+    texto (str): Texto original a analizar.
+    idioma (str): Idioma detectado, necesario para el procesamiento del japonés.
+
+Salidas:
+    None: La imagen generada se guarda en 'static/img/nube.png'.
+"""
 
 from wordcloud import WordCloud
 def generar_nube_palabras(texto, idioma): #la nube se genera a partir del texto limpio
     
     ruta_directorio = "static/img" #aquí se guarda la imágen
-    os.makedirs(ruta_directorio, exist_ok=True) #
+    os.makedirs(ruta_directorio, exist_ok=True) #aquí creamos esa ruta, si ya estaba creada (se crea cada vez que se analiza texto) no lanza ningún error
     #wordcloud hace la nube a partir de las palabras que detecta (separadas por espacio, como el japonés no se separa así entonces...)
     if idioma == "日本語":
         tagger = Tagger()

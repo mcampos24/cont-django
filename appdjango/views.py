@@ -4,6 +4,16 @@ from .utils import obtener_texto_desde_request, analizar_texto, detectar_idioma,
 from .idiomas import mensajes_por_idioma #Se importan los demas archivos con los que se va a trabajar.
 import json #Ayuda a convertir listas o diccionarios a texto en formato JSON
 
+"""
+Vista principal de la aplicación. Procesa el texto ingresado, detecta el idioma, genera estadísticas y renderiza los resultados.
+
+Entradas:
+    request (HttpRequest): Solicitud HTTP recibida (GET o POST).
+
+Salidas:
+    HttpResponse: Página renderizada con el análisis del texto, gráficos, nube de palabras y mensajes en el idioma seleccionado.
+"""
+
 def inicio(request): #Función que se activa cuando alguien entra a la pagina principal
     idioma_i = int(request.GET.get("idioma_i", 2))  # Español por defecto
     mensajes = mensajes_por_idioma(idioma_i)
