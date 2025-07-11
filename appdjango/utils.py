@@ -249,16 +249,16 @@ def varianza_poblacional(total_veces, palabras_unicas, mensajes):
     suma_frecuencias = 0
     for i in total_veces:
         suma_frecuencias += i
-        promedio = suma_frecuencias / len(palabras_unicas)
+    promedio = suma_frecuencias / len(palabras_unicas)
     #Cálculo de varianza poblacional de frecuencia.
     nu = 0
     for i in total_veces:
         nu += (i - promedio)**2
-        varianza = nu / len(palabras_unicas)
+    varianza = nu / len(palabras_unicas)
     #Dependiendo de la varianza que tenga el texto
-    if varianza <= 0.2:
+    if varianza <= 1:
         respuesta = mensajes.get('e')
-    elif 0.2 < varianza < 0.6:
+    elif 1 < varianza <= 4:
         respuesta = mensajes.get('f')
     else:
         respuesta = mensajes.get('g')
