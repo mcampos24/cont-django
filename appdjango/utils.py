@@ -1,7 +1,7 @@
 import os, re
 from django.conf import settings  #para obtener BASE_DIR
 from .idiomas import mensajes_por_idioma
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
 from fugashi import Tagger
 
 #Django no acepta tkinter porque no es una app de escritorio, entonces cambiamos la manera de obtener el texto
@@ -283,7 +283,7 @@ def generar_nube_palabras(texto): #la nube se genera a partir del texto limpio
         height=400,
         background_color="#f9f5f0", #fondo de la misma pg
         colormap="plasma",
-        #font_path="static/fonts/MiFuente.ttf",  #fuente personalizada
+        font_path="static/fuente/notosans.ttf",  #se añade una fuente que soporta los carácteres japoneses
         max_words=100,
     ).generate(texto)
 
