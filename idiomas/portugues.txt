@@ -26,6 +26,7 @@ rir
 abraço
 tempestade
 rosto
+<<<<<<< HEAD
 graça
 ação
 expressão
@@ -243,3 +244,9 @@ efetivamente
 naturalmente  
 provavelmente  
 imediatamente  
+muito
+usam
+os 
+trabalhar
+estudar
+
