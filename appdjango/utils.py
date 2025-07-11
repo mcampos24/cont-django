@@ -1,7 +1,8 @@
-import os
+import os, re
 from django.conf import settings  #para obtener BASE_DIR
 from .idiomas import mensajes_por_idioma
 from django.http import HttpRequest, HttpResponse
+from fugashi import Tagger
 
 #Django no acepta tkinter porque no es una app de escritorio, entonces cambiamos la manera de obtener el texto
 def leer_texto_manual(texto: str):
@@ -35,44 +36,43 @@ def obtener_texto_desde_request(request: HttpRequest): #ir a views para visualiz
                     return "Error"
     return "" #Si no se detecta ningún texto válido o el modo no está definido, se retorna una cadena vacía
 
-#En estos apartados se hace la adaptación al cuaderno de colab para una mayor organicación en funciones.
-def detectar_idioma(texto, mensajes):
-    texto = texto.lower() #Se convierte el texto ingresado a minusculas.
+# En estos apartados se hace la adaptación al cuaderno de colab para una mayor organización en funciones.
+#Pre-inicializa el tagger de japonés
+TAGGER = Tagger()
 
-    archivos_idioma = {
+def detectar_idioma(texto: str, mensajes: dict): #daba un montón de errores entonces aquí por si algo se le condiciona a ser string
+    texto = texto.strip()
+    #tokenizamos:
+    if re.search(r'[\u3000-\u303F\u3040-\u309F\u30A0-\u30FF]', texto): #el re permite la búsqueda de esos carácteres
+        #Contiene caracteres japoneses usando fugashi
+        tokens = [t.surface for t in TAGGER(texto)] #Los "tokens superficiales" son las palabras tal como aparecen, en analizar texto se ve prácticamente esta misma línea, solo que con otras variables.
+    else:
+        #extraemos palabras latinas completas, (si no es japonés, extraemos palabras normales (letras, números, etc.))
+        tokens = re.findall(r'\b\w+\b', texto.lower()) #nuevamente un re para buscar, todo esto en la cadena en minúsculas
+
+    archivos = {
         #Diccionario que asocia cada idioma con su archivo .txt de palabras mas usadas
         "español": "español.txt",
         "portugues": "portugues.txt",
+        "ingles":  "ingles.txt",
         "japones": "japones.txt",
-        "ingles": "ingles.txt",
     }
-    #Se crea un diccionario para registrar los puntajes de coincidencias por idioma
-    puntaje = {idioma: 0 for idioma in archivos_idioma}
-    palabras_texto = texto.lower().split() #cambié esto, resulta que pues tocaba poner el texto como lista para que se recorriera bien, por eso no detectaba antes
-
-    #Se recorre cada idioma y su archivo correspondiente
-    for idioma, archivo in archivos_idioma.items():
+    puntaje = {} #aquí se registrapan los puntajes por idioma
+    for idioma, archivo in archivos.items(): #por los archivos de texto
         #Se abre y lee el archivo con palabras clave del idioma (usando "utf-8" como codificación)
-        ruta = os.path.join(settings.BASE_DIR, 'idiomas', archivo)
-        if not os.path.exists(ruta):
-            continue  #evita error si el archivo no existe
-        with open(ruta, "r", encoding="utf-8") as f:
-            #Se lee todo el contenido, se pasa a minusculas y se reemplaza saltos de linea por espacios
-            contenido = f.read().lower().replace("\n", " ")
-            #Se divide el texto en palabras separadas por espacio
-            palabras = contenido.split()
+        path = os.path.join(settings.BASE_DIR, "idiomas", archivo)
+        if not os.path.exists(path):
+            puntaje[idioma] = 0 #el puntaje de los idiomas será 0 para evitar error si el archivo no existe
+            continue 
+        palabras_clave = open(path, encoding="utf-8").read().lower().split()
+        #contamos cuántas palabras del texto están en las palabras clave
+        contador = sum(1 for w in tokens if w.lower() in palabras_clave)
+        puntaje[idioma] = contador #cuántas por cada idioma
 
-        #Se busca palabras del archivo que esten dentro del texto ingresado
-        for palabra in palabras:
-            if palabra in palabras_texto: #la lista de las palabras de los idiomas recorre la del texto y mira si hay similares
-                #Se suma al puntaje cuantas veces aparece esa palabra en el texto
-                puntaje[idioma] += 1 #si sí, suma al puntaje
-
-    #Si ningún idioma obtuvo puntaje (0 coincidencias en todos), no se detectó idioma
+     #Si ningún idioma obtuvo puntaje (0 coincidencias en todos), no se detectó idioma
     if all(p == 0 for p in puntaje.values()):
-        return mensajes.get('no')
-
-    #Se retorna el idioma con el puntaje más alto (el más probable)
+        return mensajes.get("no", "Idioma no detectado")
+    #Se retorna el idioma con el puntaje más alto (el más probable), si hay empate, max() escoge el primero en orden dict
     return max(puntaje, key=puntaje.get)
 
 # Cargar los 4 diccionarios creados
@@ -140,7 +140,6 @@ def sugerir_sinonimos(palabras_10_top, idioma):
     return sugerencias #Devuelve la lista de sugerencias generadas
 
 import string
-from fugashi import Tagger
 
 #Limpieza de cadena y contador de letras, frases y palabras (Esta es la función principal a la que los views recurren, por eso su return es un diccionario con los resultados de las demás funciones)
 def analizar_texto(texto: str, mensajes):
