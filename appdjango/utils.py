@@ -1,8 +1,8 @@
-import os, re
+import os
 from django.conf import settings  #para obtener BASE_DIR
 from .idiomas import mensajes_por_idioma
 from django.http import HttpRequest
-from fugashi import Tagger
+from fugashi import GenericTagger as Tagger #Como en este caso usamos Mecab, importamos GenericTagger, si es con unidict sería eliminar GenericTagger as de esta linea
 
 #Django no acepta tkinter porque no es una app de escritorio, entonces cambiamos la manera de obtener el texto
 """

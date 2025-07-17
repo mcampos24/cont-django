@@ -21,7 +21,7 @@ def inicio(request): #Función que se activa cuando alguien entra a la pagina pr
     texto_usuario = ""
 
     # Inicializar variables para que no fallen si es GET
-    labels_json = json.dumps([])
+    labels_json = json.dumps([])        
     data_json = json.dumps([])
     labels_pie = json.dumps([])
     data_pie = json.dumps([])
